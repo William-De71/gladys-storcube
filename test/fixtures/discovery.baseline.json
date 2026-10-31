@@ -1,0 +1,402 @@
+{
+  "devices": {
+    "master": {
+      "external_id": "ext:test-integration:battery:910012345",
+      "should_poll": false,
+      "params": ["STORCUBE_EQUIP_ID", "STORCUBE_ROLE"],
+      "features": [
+        {
+          "external_id": "ext:test-integration:battery:910012345:battery_level",
+          "category": "battery-storage",
+          "type": "battery-level",
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:battery_energy_remaining",
+          "category": "battery-storage",
+          "type": "battery-energy-remaining",
+          "unit": "kilowatt-hour",
+          "min": 0,
+          "max": 50,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:battery_charge_power",
+          "category": "battery-storage",
+          "type": "charge-power",
+          "unit": "watt",
+          "min": 0,
+          "max": 5000,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:battery_discharge_power",
+          "category": "battery-storage",
+          "type": "discharge-power",
+          "unit": "watt",
+          "min": 0,
+          "max": 5000,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:pv_power",
+          "category": "energy-production-sensor",
+          "type": "power",
+          "unit": "watt",
+          "min": 0,
+          "max": 5000,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:output_power",
+          "category": "home-output-sensor",
+          "type": "power",
+          "unit": "watt",
+          "min": 0,
+          "max": 5000,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:output_setpoint",
+          "category": "switch",
+          "type": "dimmer",
+          "unit": "watt",
+          "min": 0,
+          "max": 800,
+          "step": 10,
+          "read_only": false,
+          "has_feedback": true
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:output_enabled",
+          "category": "switch",
+          "type": "binary",
+          "min": 0,
+          "max": 1,
+          "read_only": false,
+          "has_feedback": true
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:discharge_threshold",
+          "category": "switch",
+          "type": "dimmer",
+          "min": 0,
+          "max": 100,
+          "read_only": false,
+          "has_feedback": true
+        },
+        {
+          "external_id": "ext:test-integration:battery:910012345:temperature",
+          "category": "device-temperature-sensor",
+          "type": "decimal",
+          "unit": "celsius",
+          "min": -40,
+          "max": 100,
+          "read_only": true,
+          "has_feedback": false
+        }
+      ]
+    },
+    "expansion": {
+      "external_id": "ext:test-integration:battery:910067890",
+      "should_poll": false,
+      "params": ["STORCUBE_EQUIP_ID", "STORCUBE_ROLE"],
+      "features": [
+        {
+          "external_id": "ext:test-integration:battery:910067890:battery_level",
+          "category": "battery-storage",
+          "type": "battery-level",
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:test-integration:battery:910067890:battery_energy_remaining",
+          "category": "battery-storage",
+          "type": "battery-energy-remaining",
+          "unit": "kilowatt-hour",
+          "min": 0,
+          "max": 50,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:test-integration:battery:910067890:temperature",
+          "category": "device-temperature-sensor",
+          "type": "decimal",
+          "unit": "celsius",
+          "min": -40,
+          "max": 100,
+          "read_only": true,
+          "has_feedback": false
+        }
+      ]
+    }
+  },
+  "manifest": {
+    "config_schema": [
+      {
+        "key": "account",
+        "type": "section"
+      },
+      {
+        "key": "login_name",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "type": "secret"
+      },
+      {
+        "key": "equip_id",
+        "type": "string"
+      },
+      {
+        "key": "app_code",
+        "type": "string"
+      },
+      {
+        "key": "language",
+        "type": "select"
+      }
+    ],
+    "actions": ["test_connection", "diagnostic"],
+    "widgets": [
+      {
+        "key": "live",
+        "settings": [],
+        "options": {}
+      }
+    ],
+    "scene_triggers": [
+      {
+        "key": "battery_full",
+        "fields": [
+          {
+            "key": "battery",
+            "options": []
+          }
+        ],
+        "variables": [
+          {
+            "key": "battery",
+            "type": "string"
+          },
+          {
+            "key": "battery_name",
+            "type": "string"
+          },
+          {
+            "key": "equip_id",
+            "type": "string"
+          },
+          {
+            "key": "battery_level",
+            "type": "number"
+          },
+          {
+            "key": "threshold",
+            "type": "number"
+          },
+          {
+            "key": "pv_power_w",
+            "type": "number"
+          },
+          {
+            "key": "output_power_w",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "battery_empty",
+        "fields": [
+          {
+            "key": "battery",
+            "options": []
+          }
+        ],
+        "variables": [
+          {
+            "key": "battery",
+            "type": "string"
+          },
+          {
+            "key": "battery_name",
+            "type": "string"
+          },
+          {
+            "key": "equip_id",
+            "type": "string"
+          },
+          {
+            "key": "battery_level",
+            "type": "number"
+          },
+          {
+            "key": "threshold",
+            "type": "number"
+          },
+          {
+            "key": "pv_power_w",
+            "type": "number"
+          },
+          {
+            "key": "output_power_w",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "battery_offline",
+        "fields": [
+          {
+            "key": "battery",
+            "options": []
+          }
+        ],
+        "variables": [
+          {
+            "key": "battery",
+            "type": "string"
+          },
+          {
+            "key": "battery_name",
+            "type": "string"
+          },
+          {
+            "key": "equip_id",
+            "type": "string"
+          },
+          {
+            "key": "battery_level",
+            "type": "number"
+          },
+          {
+            "key": "threshold",
+            "type": "number"
+          },
+          {
+            "key": "pv_power_w",
+            "type": "number"
+          },
+          {
+            "key": "output_power_w",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "battery_online",
+        "fields": [
+          {
+            "key": "battery",
+            "options": []
+          }
+        ],
+        "variables": [
+          {
+            "key": "battery",
+            "type": "string"
+          },
+          {
+            "key": "battery_name",
+            "type": "string"
+          },
+          {
+            "key": "equip_id",
+            "type": "string"
+          },
+          {
+            "key": "battery_level",
+            "type": "number"
+          },
+          {
+            "key": "threshold",
+            "type": "number"
+          },
+          {
+            "key": "pv_power_w",
+            "type": "number"
+          },
+          {
+            "key": "output_power_w",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "firmware_update",
+        "fields": [
+          {
+            "key": "battery",
+            "options": []
+          }
+        ],
+        "variables": [
+          {
+            "key": "battery",
+            "type": "string"
+          },
+          {
+            "key": "battery_name",
+            "type": "string"
+          },
+          {
+            "key": "equip_id",
+            "type": "string"
+          },
+          {
+            "key": "battery_level",
+            "type": "number"
+          },
+          {
+            "key": "threshold",
+            "type": "number"
+          },
+          {
+            "key": "pv_power_w",
+            "type": "number"
+          },
+          {
+            "key": "output_power_w",
+            "type": "number"
+          },
+          {
+            "key": "installed_version",
+            "type": "string"
+          },
+          {
+            "key": "available_version",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "key": "access_refused",
+        "fields": [],
+        "variables": [
+          {
+            "key": "code",
+            "type": "number"
+          },
+          {
+            "key": "reason",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  }
+}

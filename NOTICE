@@ -1,0 +1,19 @@
+Gladys StorCube integration
+Copyright 2026 William Deren
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It reads, and changes when the user asks for it, the data of the StorCube
+balcony batteries of the user through the StorCube cloud (baterway.com), the
+server of the StorCube mobile app, with the e-mail and password of the user's
+own app account. That API is neither documented nor official. The endpoints,
+fields and frame shapes follow the Home Assistant integration "storcube_Ha"
+by jon7119 (https://github.com/jon7119/storcube_Ha, MIT License) and its fork
+by xez7082 (https://github.com/xez7082/storcube_Ha); the code was rewritten in
+JavaScript, no file is copied.
+
+StorCube and the StorCube logo are trademarks of their owner. The logo in
+docs/assets/storcube-logo.png (shown on the cover) is cut from the
+"logostorcubeHA.png" image of the storcube_Ha repository and is used only to
+name the brand the integration works with. This project is not affiliated
+with, endorsed or sponsored by StorCube, its manufacturer or Baterway.

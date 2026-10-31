@@ -1,0 +1,826 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "StorCube",
+  "description": {
+    "en": "StorCube balcony batteries: level, solar, injection setpoint and threshold.",
+    "fr": "Batteries de balcon StorCube : niveau, solaire, consigne d’injection et seuil.",
+    "de": "StorCube-Balkonbatterien: Stand, Solar, Einspeise-Sollwert und Entladegrenze.",
+    "es": "Baterías de balcón StorCube: nivel, solar, consigna de inyección y umbral."
+  },
+  "version": "0.1.0",
+  "docker_image": "ghcr.io/william-de71/gladys-storcube:0.1.0",
+  "gladys_version": ">=5.3.0",
+  "categories": ["energy"],
+  "keywords": [
+    "S1000",
+    "Baterway",
+    "balcony battery",
+    "batterie de balcon",
+    "Balkonkraftwerk",
+    "plug-in solar",
+    "solaire",
+    "home battery",
+    "micro-inverter",
+    "batería"
+  ],
+  "cover_image": "https://raw.githubusercontent.com/William-De71/gladys-storcube/main/cover.jpg",
+  "transports": ["cloud"],
+  "config_schema": [
+    {
+      "key": "account",
+      "type": "section",
+      "label": {
+        "en": "StorCube account",
+        "fr": "Compte StorCube",
+        "de": "StorCube-Konto",
+        "es": "Cuenta StorCube"
+      },
+      "description": {
+        "en": "Use the e-mail and password of the StorCube app. The data go through the StorCube cloud (baterway.com), whose API is unofficial and unencrypted (plain HTTP): use a password you use nowhere else. Not affiliated with StorCube.",
+        "fr": "Utilisez l’e-mail et le mot de passe de l’application StorCube. Les données passent par le cloud StorCube (baterway.com), dont l’API est non officielle et non chiffrée (HTTP simple) : utilisez un mot de passe que vous n’utilisez nulle part ailleurs. Non affiliée à StorCube.",
+        "de": "Verwende E-Mail und Passwort der StorCube-App. Die Daten laufen über die StorCube-Cloud (baterway.com), deren API inoffiziell und unverschlüsselt ist (reines HTTP): Nutze ein Passwort, das du nirgends sonst verwendest. Nicht mit StorCube verbunden.",
+        "es": "Use el correo y la contraseña de la aplicación StorCube. Los datos pasan por la nube de StorCube (baterway.com), cuya API no es oficial ni cifrada (HTTP simple): use una contraseña que no utilice en ningún otro sitio. No afiliada a StorCube."
+      }
+    },
+    {
+      "key": "login_name",
+      "type": "string",
+      "required": true,
+      "label": {
+        "en": "E-mail of the StorCube app",
+        "fr": "E-mail de l’application StorCube",
+        "de": "E-Mail der StorCube-App",
+        "es": "Correo de la aplicación StorCube"
+      },
+      "placeholder": {
+        "en": "me@example.com",
+        "fr": "moi@exemple.fr",
+        "de": "ich@beispiel.de",
+        "es": "yo@ejemplo.es"
+      }
+    },
+    {
+      "key": "password",
+      "type": "secret",
+      "required": true,
+      "label": {
+        "en": "Password",
+        "fr": "Mot de passe",
+        "de": "Passwort",
+        "es": "Contraseña"
+      }
+    },
+    {
+      "key": "equip_id",
+      "type": "string",
+      "required": true,
+      "label": {
+        "en": "Serial number of the master battery",
+        "fr": "Numéro de série de la batterie maître",
+        "de": "Seriennummer der Hauptbatterie",
+        "es": "Número de serie de la batería principal"
+      },
+      "description": {
+        "en": "On the label of the battery or in the app: the battery wired to the panels and the micro-inverter.",
+        "fr": "Sur l’étiquette de la batterie ou dans l’application : la batterie reliée aux panneaux et au micro-onduleur.",
+        "de": "Auf dem Etikett der Batterie oder in der App: die Batterie, an der Module und Mikro-Wechselrichter hängen.",
+        "es": "En la etiqueta de la batería o en la aplicación: la batería conectada a los paneles y al microinversor."
+      },
+      "placeholder": {
+        "en": "Digits on the label",
+        "fr": "Chiffres de l’étiquette",
+        "de": "Ziffern auf dem Etikett",
+        "es": "Cifras de la etiqueta"
+      }
+    },
+    {
+      "key": "app_code",
+      "type": "string",
+      "required": false,
+      "default": "Storcube",
+      "label": {
+        "en": "App code",
+        "fr": "Code application",
+        "de": "App-Code",
+        "es": "Código de aplicación"
+      },
+      "description": {
+        "en": "Leave “Storcube” unless your battery uses another app of the same cloud.",
+        "fr": "Laissez « Storcube », sauf si votre batterie utilise une autre application du même cloud.",
+        "de": "Lass „Storcube“ stehen, außer deine Batterie nutzt eine andere App derselben Cloud.",
+        "es": "Deje «Storcube», salvo que su batería use otra aplicación de la misma nube."
+      }
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "default": "auto",
+      "label": {
+        "en": "Language of the texts",
+        "fr": "Langue des textes",
+        "de": "Sprache der Texte",
+        "es": "Idioma de los textos"
+      },
+      "description": {
+        "en": "Feature names, scene texts and errors. Automatic: the language of the last widget shown.",
+        "fr": "Noms des fonctionnalités, textes des scènes et erreurs. Automatique : la langue du dernier widget affiché.",
+        "de": "Namen der Funktionen, Szenentexte und Fehler. Automatisch: die Sprache des zuletzt angezeigten Widgets.",
+        "es": "Nombres de las funciones, textos de escenas y errores. Automático: el idioma del último widget mostrado."
+      },
+      "options": [
+        {
+          "value": "auto",
+          "label": {
+            "en": "Automatic",
+            "fr": "Automatique",
+            "de": "Automatisch",
+            "es": "Automático"
+          }
+        },
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "key": "test_connection",
+      "timeout_seconds": 45,
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "description": {
+        "en": "Logs in to the StorCube cloud and reads the settings of the battery: model, batteries of the stack, setpoint, threshold.",
+        "fr": "Se connecte au cloud StorCube et lit les réglages de la batterie : modèle, batteries de la pile, consigne, seuil.",
+        "de": "Meldet sich bei der StorCube-Cloud an und liest die Einstellungen der Batterie: Modell, Batterien im Stapel, Sollwert, Grenze.",
+        "es": "Inicia sesión en la nube de StorCube y lee los ajustes de la batería: modelo, baterías de la pila, consigna, umbral."
+      }
+    },
+    {
+      "key": "diagnostic",
+      "timeout_seconds": 10,
+      "label": {
+        "en": "Diagnostic",
+        "fr": "Diagnostic",
+        "de": "Diagnose",
+        "es": "Diagnóstico"
+      },
+      "description": {
+        "en": "Writes what the integration knows to its logs (never the password), to join to a bug report.",
+        "fr": "Écrit ce que sait l’intégration dans ses journaux (jamais le mot de passe), à joindre à un signalement.",
+        "de": "Schreibt, was die Integration weiß, in ihre Protokolle (nie das Passwort), für eine Fehlermeldung.",
+        "es": "Escribe lo que sabe la integración en sus registros (nunca la contraseña), para adjuntar a un informe."
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "key": "live",
+      "icon": "battery-charging",
+      "label": {
+        "en": "StorCube now",
+        "fr": "StorCube en direct",
+        "de": "StorCube jetzt",
+        "es": "StorCube ahora"
+      },
+      "description": {
+        "en": "Battery, solar, power to the house, setpoint and threshold.",
+        "fr": "Batterie, solaire, puissance vers la maison, consigne et seuil.",
+        "de": "Batterie, Solar, Leistung ins Haus, Sollwert und Grenze.",
+        "es": "Batería, solar, potencia hacia la casa, consigna y umbral."
+      }
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "battery_full",
+      "label": {
+        "en": "StorCube: battery full",
+        "fr": "StorCube : batterie pleine",
+        "de": "StorCube: Batterie voll",
+        "es": "StorCube: batería llena"
+      },
+      "description": {
+        "en": "The battery reaches 100 %. Again once it went under 95 %.",
+        "fr": "La batterie atteint 100 %. À nouveau après être repassée sous 95 %.",
+        "de": "Die Batterie erreicht 100 %. Erneut, nachdem sie unter 95 % fiel.",
+        "es": "La batería llega al 100 %. De nuevo tras bajar del 95 %."
+      },
+      "fields": [
+        {
+          "key": "battery",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Battery",
+            "fr": "Batterie",
+            "de": "Batterie",
+            "es": "Batería"
+          },
+          "description": {
+            "en": "A StorCube device. Leave empty for any battery.",
+            "fr": "Un appareil StorCube. Laissez vide pour n’importe quelle batterie.",
+            "de": "Ein StorCube-Gerät. Leer lassen für jede Batterie.",
+            "es": "Un dispositivo StorCube. Déjelo vacío para cualquier batería."
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "battery",
+          "type": "string",
+          "label": {
+            "en": "Device",
+            "fr": "Appareil",
+            "de": "Gerät",
+            "es": "Dispositivo"
+          }
+        },
+        {
+          "key": "battery_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l’appareil",
+            "de": "Gerätename",
+            "es": "Nombre del dispositivo"
+          }
+        },
+        {
+          "key": "equip_id",
+          "type": "string",
+          "label": {
+            "en": "Serial number",
+            "fr": "Numéro de série",
+            "de": "Seriennummer",
+            "es": "Número de serie"
+          }
+        },
+        {
+          "key": "battery_level",
+          "type": "number",
+          "label": {
+            "en": "Battery level (%)",
+            "fr": "Niveau de batterie (%)",
+            "de": "Batteriestand (%)",
+            "es": "Nivel de batería (%)"
+          }
+        },
+        {
+          "key": "threshold",
+          "type": "number",
+          "label": {
+            "en": "Discharge threshold (%)",
+            "fr": "Seuil de décharge (%)",
+            "de": "Entladegrenze (%)",
+            "es": "Umbral de descarga (%)"
+          }
+        },
+        {
+          "key": "pv_power_w",
+          "type": "number",
+          "label": {
+            "en": "Solar power (W)",
+            "fr": "Puissance solaire (W)",
+            "de": "Solarleistung (W)",
+            "es": "Potencia solar (W)"
+          }
+        },
+        {
+          "key": "output_power_w",
+          "type": "number",
+          "label": {
+            "en": "Power to the house (W)",
+            "fr": "Puissance vers la maison (W)",
+            "de": "Leistung ins Haus (W)",
+            "es": "Potencia hacia la casa (W)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "battery_empty",
+      "label": {
+        "en": "StorCube: battery at its threshold",
+        "fr": "StorCube : batterie au seuil",
+        "de": "StorCube: Batterie an der Grenze",
+        "es": "StorCube: batería en el umbral"
+      },
+      "description": {
+        "en": "The level reaches the discharge threshold: the battery stops sending power. Again 5 points above.",
+        "fr": "Le niveau atteint le seuil de décharge : la batterie n’injecte plus. À nouveau 5 points au-dessus.",
+        "de": "Der Stand erreicht die Entladegrenze: Die Batterie speist nicht mehr ein. Erneut 5 Punkte darüber.",
+        "es": "El nivel llega al umbral de descarga: la batería deja de inyectar. De nuevo 5 puntos por encima."
+      },
+      "fields": [
+        {
+          "key": "battery",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Battery",
+            "fr": "Batterie",
+            "de": "Batterie",
+            "es": "Batería"
+          },
+          "description": {
+            "en": "A StorCube device. Leave empty for any battery.",
+            "fr": "Un appareil StorCube. Laissez vide pour n’importe quelle batterie.",
+            "de": "Ein StorCube-Gerät. Leer lassen für jede Batterie.",
+            "es": "Un dispositivo StorCube. Déjelo vacío para cualquier batería."
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "battery",
+          "type": "string",
+          "label": {
+            "en": "Device",
+            "fr": "Appareil",
+            "de": "Gerät",
+            "es": "Dispositivo"
+          }
+        },
+        {
+          "key": "battery_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l’appareil",
+            "de": "Gerätename",
+            "es": "Nombre del dispositivo"
+          }
+        },
+        {
+          "key": "equip_id",
+          "type": "string",
+          "label": {
+            "en": "Serial number",
+            "fr": "Numéro de série",
+            "de": "Seriennummer",
+            "es": "Número de serie"
+          }
+        },
+        {
+          "key": "battery_level",
+          "type": "number",
+          "label": {
+            "en": "Battery level (%)",
+            "fr": "Niveau de batterie (%)",
+            "de": "Batteriestand (%)",
+            "es": "Nivel de batería (%)"
+          }
+        },
+        {
+          "key": "threshold",
+          "type": "number",
+          "label": {
+            "en": "Discharge threshold (%)",
+            "fr": "Seuil de décharge (%)",
+            "de": "Entladegrenze (%)",
+            "es": "Umbral de descarga (%)"
+          }
+        },
+        {
+          "key": "pv_power_w",
+          "type": "number",
+          "label": {
+            "en": "Solar power (W)",
+            "fr": "Puissance solaire (W)",
+            "de": "Solarleistung (W)",
+            "es": "Potencia solar (W)"
+          }
+        },
+        {
+          "key": "output_power_w",
+          "type": "number",
+          "label": {
+            "en": "Power to the house (W)",
+            "fr": "Puissance vers la maison (W)",
+            "de": "Leistung ins Haus (W)",
+            "es": "Potencia hacia la casa (W)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "battery_offline",
+      "label": {
+        "en": "StorCube: battery silent",
+        "fr": "StorCube : batterie muette",
+        "de": "StorCube: Batterie stumm",
+        "es": "StorCube: batería sin datos"
+      },
+      "description": {
+        "en": "The master battery sent nothing to the cloud for 20 minutes while the cloud answers.",
+        "fr": "La batterie maître n’a rien envoyé au cloud depuis 20 minutes alors que le cloud répond.",
+        "de": "Die Hauptbatterie hat seit 20 Minuten nichts an die Cloud gesendet, obwohl die Cloud antwortet.",
+        "es": "La batería principal no ha enviado nada a la nube en 20 minutos aunque la nube responde."
+      },
+      "fields": [
+        {
+          "key": "battery",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Battery",
+            "fr": "Batterie",
+            "de": "Batterie",
+            "es": "Batería"
+          },
+          "description": {
+            "en": "A StorCube device. Leave empty for any battery.",
+            "fr": "Un appareil StorCube. Laissez vide pour n’importe quelle batterie.",
+            "de": "Ein StorCube-Gerät. Leer lassen für jede Batterie.",
+            "es": "Un dispositivo StorCube. Déjelo vacío para cualquier batería."
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "battery",
+          "type": "string",
+          "label": {
+            "en": "Device",
+            "fr": "Appareil",
+            "de": "Gerät",
+            "es": "Dispositivo"
+          }
+        },
+        {
+          "key": "battery_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l’appareil",
+            "de": "Gerätename",
+            "es": "Nombre del dispositivo"
+          }
+        },
+        {
+          "key": "equip_id",
+          "type": "string",
+          "label": {
+            "en": "Serial number",
+            "fr": "Numéro de série",
+            "de": "Seriennummer",
+            "es": "Número de serie"
+          }
+        },
+        {
+          "key": "battery_level",
+          "type": "number",
+          "label": {
+            "en": "Battery level (%)",
+            "fr": "Niveau de batterie (%)",
+            "de": "Batteriestand (%)",
+            "es": "Nivel de batería (%)"
+          }
+        },
+        {
+          "key": "threshold",
+          "type": "number",
+          "label": {
+            "en": "Discharge threshold (%)",
+            "fr": "Seuil de décharge (%)",
+            "de": "Entladegrenze (%)",
+            "es": "Umbral de descarga (%)"
+          }
+        },
+        {
+          "key": "pv_power_w",
+          "type": "number",
+          "label": {
+            "en": "Solar power (W)",
+            "fr": "Puissance solaire (W)",
+            "de": "Solarleistung (W)",
+            "es": "Potencia solar (W)"
+          }
+        },
+        {
+          "key": "output_power_w",
+          "type": "number",
+          "label": {
+            "en": "Power to the house (W)",
+            "fr": "Puissance vers la maison (W)",
+            "de": "Leistung ins Haus (W)",
+            "es": "Potencia hacia la casa (W)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "battery_online",
+      "label": {
+        "en": "StorCube: battery back",
+        "fr": "StorCube : batterie de retour",
+        "de": "StorCube: Batterie zurück",
+        "es": "StorCube: batería de vuelta"
+      },
+      "description": {
+        "en": "The master battery sends data again after being silent.",
+        "fr": "La batterie maître envoie de nouveau des données après un silence.",
+        "de": "Die Hauptbatterie sendet nach einer Pause wieder Daten.",
+        "es": "La batería principal vuelve a enviar datos tras un silencio."
+      },
+      "fields": [
+        {
+          "key": "battery",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Battery",
+            "fr": "Batterie",
+            "de": "Batterie",
+            "es": "Batería"
+          },
+          "description": {
+            "en": "A StorCube device. Leave empty for any battery.",
+            "fr": "Un appareil StorCube. Laissez vide pour n’importe quelle batterie.",
+            "de": "Ein StorCube-Gerät. Leer lassen für jede Batterie.",
+            "es": "Un dispositivo StorCube. Déjelo vacío para cualquier batería."
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "battery",
+          "type": "string",
+          "label": {
+            "en": "Device",
+            "fr": "Appareil",
+            "de": "Gerät",
+            "es": "Dispositivo"
+          }
+        },
+        {
+          "key": "battery_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l’appareil",
+            "de": "Gerätename",
+            "es": "Nombre del dispositivo"
+          }
+        },
+        {
+          "key": "equip_id",
+          "type": "string",
+          "label": {
+            "en": "Serial number",
+            "fr": "Numéro de série",
+            "de": "Seriennummer",
+            "es": "Número de serie"
+          }
+        },
+        {
+          "key": "battery_level",
+          "type": "number",
+          "label": {
+            "en": "Battery level (%)",
+            "fr": "Niveau de batterie (%)",
+            "de": "Batteriestand (%)",
+            "es": "Nivel de batería (%)"
+          }
+        },
+        {
+          "key": "threshold",
+          "type": "number",
+          "label": {
+            "en": "Discharge threshold (%)",
+            "fr": "Seuil de décharge (%)",
+            "de": "Entladegrenze (%)",
+            "es": "Umbral de descarga (%)"
+          }
+        },
+        {
+          "key": "pv_power_w",
+          "type": "number",
+          "label": {
+            "en": "Solar power (W)",
+            "fr": "Puissance solaire (W)",
+            "de": "Solarleistung (W)",
+            "es": "Potencia solar (W)"
+          }
+        },
+        {
+          "key": "output_power_w",
+          "type": "number",
+          "label": {
+            "en": "Power to the house (W)",
+            "fr": "Puissance vers la maison (W)",
+            "de": "Leistung ins Haus (W)",
+            "es": "Potencia hacia la casa (W)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "firmware_update",
+      "label": {
+        "en": "StorCube: firmware update",
+        "fr": "StorCube : mise à jour firmware",
+        "de": "StorCube: Firmware-Update",
+        "es": "StorCube: actualización de firmware"
+      },
+      "description": {
+        "en": "The StorCube cloud offers a new firmware for the master battery (once per version).",
+        "fr": "Le cloud StorCube propose un nouveau firmware pour la batterie maître (une fois par version).",
+        "de": "Die StorCube-Cloud bietet eine neue Firmware für die Hauptbatterie an (einmal pro Version).",
+        "es": "La nube de StorCube ofrece un nuevo firmware para la batería principal (una vez por versión)."
+      },
+      "fields": [
+        {
+          "key": "battery",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Battery",
+            "fr": "Batterie",
+            "de": "Batterie",
+            "es": "Batería"
+          },
+          "description": {
+            "en": "A StorCube device. Leave empty for any battery.",
+            "fr": "Un appareil StorCube. Laissez vide pour n’importe quelle batterie.",
+            "de": "Ein StorCube-Gerät. Leer lassen für jede Batterie.",
+            "es": "Un dispositivo StorCube. Déjelo vacío para cualquier batería."
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "battery",
+          "type": "string",
+          "label": {
+            "en": "Device",
+            "fr": "Appareil",
+            "de": "Gerät",
+            "es": "Dispositivo"
+          }
+        },
+        {
+          "key": "battery_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l’appareil",
+            "de": "Gerätename",
+            "es": "Nombre del dispositivo"
+          }
+        },
+        {
+          "key": "equip_id",
+          "type": "string",
+          "label": {
+            "en": "Serial number",
+            "fr": "Numéro de série",
+            "de": "Seriennummer",
+            "es": "Número de serie"
+          }
+        },
+        {
+          "key": "battery_level",
+          "type": "number",
+          "label": {
+            "en": "Battery level (%)",
+            "fr": "Niveau de batterie (%)",
+            "de": "Batteriestand (%)",
+            "es": "Nivel de batería (%)"
+          }
+        },
+        {
+          "key": "threshold",
+          "type": "number",
+          "label": {
+            "en": "Discharge threshold (%)",
+            "fr": "Seuil de décharge (%)",
+            "de": "Entladegrenze (%)",
+            "es": "Umbral de descarga (%)"
+          }
+        },
+        {
+          "key": "pv_power_w",
+          "type": "number",
+          "label": {
+            "en": "Solar power (W)",
+            "fr": "Puissance solaire (W)",
+            "de": "Solarleistung (W)",
+            "es": "Potencia solar (W)"
+          }
+        },
+        {
+          "key": "output_power_w",
+          "type": "number",
+          "label": {
+            "en": "Power to the house (W)",
+            "fr": "Puissance vers la maison (W)",
+            "de": "Leistung ins Haus (W)",
+            "es": "Potencia hacia la casa (W)"
+          }
+        },
+        {
+          "key": "installed_version",
+          "type": "string",
+          "label": {
+            "en": "Installed version",
+            "fr": "Version installée",
+            "de": "Installierte Version",
+            "es": "Versión instalada"
+          }
+        },
+        {
+          "key": "available_version",
+          "type": "string",
+          "label": {
+            "en": "Available version",
+            "fr": "Version disponible",
+            "de": "Verfügbare Version",
+            "es": "Versión disponible"
+          }
+        }
+      ]
+    },
+    {
+      "key": "access_refused",
+      "label": {
+        "en": "StorCube: login refused",
+        "fr": "StorCube : connexion refusée",
+        "de": "StorCube: Anmeldung abgelehnt",
+        "es": "StorCube: inicio de sesión rechazado"
+      },
+      "description": {
+        "en": "The StorCube cloud refuses the e-mail or the password: the integration stops until the configuration changes.",
+        "fr": "Le cloud StorCube refuse l’e-mail ou le mot de passe : l’intégration s’arrête jusqu’à une nouvelle configuration.",
+        "de": "Die StorCube-Cloud lehnt E-Mail oder Passwort ab: Die Integration hält an, bis die Konfiguration geändert wird.",
+        "es": "La nube de StorCube rechaza el correo o la contraseña: la integración se detiene hasta que cambie la configuración."
+      },
+      "variables": [
+        {
+          "key": "code",
+          "type": "number",
+          "label": {
+            "en": "Code of the cloud",
+            "fr": "Code du cloud",
+            "de": "Code der Cloud",
+            "es": "Código de la nube"
+          }
+        },
+        {
+          "key": "reason",
+          "type": "string",
+          "label": {
+            "en": "Reason",
+            "fr": "Raison",
+            "de": "Grund",
+            "es": "Motivo"
+          }
+        }
+      ]
+    }
+  ]
+}
